@@ -1,9 +1,48 @@
 // Modules to control application life and create native browser window
-const {app, BrowserWindow} = require('electron')
+const {app, BrowserWindow, Notification, ipcMain} = require('electron')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow
+let z = [];
+
+ipcMain.on('notification', (_, index) => {
+  const notification = new Notification({
+    title: `Test ${index}`,
+    body: 'body',
+    hasReply: true,
+  });
+
+  notification.on('show', () => {
+    console.log(`show ${index}`);
+  });
+
+  notification.on('click', () => {
+    console.log(`click ${index}`);
+  });
+
+  notification.on('reply', (_, reply) => {
+    console.log(`reply ${index}: ${reply}`);
+  });
+
+  notification.on('close', () => {
+    console.log(`close ${index}`);
+  });
+
+  notification.show();
+
+  // Put some pressure on GC
+  z.push(...new Array(60000));
+  z.push(...new Array(60000));
+  z.push(...new Array(60000));
+  z.push(...new Array(60000));
+  z.push(...new Array(60000));
+  z.push(...new Array(60000));
+  z.push(...new Array(60000));
+  z.push(...new Array(60000));
+  z.push(...new Array(60000));
+  z.push(...new Array(60000));
+});
 
 function createWindow () {
   // Create the browser window.
